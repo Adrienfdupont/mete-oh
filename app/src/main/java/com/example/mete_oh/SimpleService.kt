@@ -17,7 +17,7 @@ private val moshi = Moshi.Builder()
     .build()
 val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))
-    .baseUrl("http://example")
+    .baseUrl("https://api.openweathermap.org/data/2.5/weather?q=lille&APPID=7d1c3e5d288d7b14cbe8db0ec6e57e11")
     .build()
 object API {
     val retrofitService: SimpleService by lazy {
