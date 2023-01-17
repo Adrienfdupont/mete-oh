@@ -1,12 +1,17 @@
 package com.example.mete_oh
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.widget.*
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import retrofit2.Call
@@ -17,9 +22,27 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var bottomNav : BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        bottomNav = findViewById(R.id.bottomNav) as BottomNavigationView
+        bottomNav.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.home -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                }
+
+                R.id.favorites -> {
+                    val intent = Intent(this, SecondActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+
+            return@setOnItemSelectedListener true
+        }
 
         fun getWeatherByCityName(cityName: String) {
             // création d'une instance retrofit
@@ -78,5 +101,12 @@ class MainActivity : AppCompatActivity() {
                 getWeatherByCityName(cityName)
             }
         }
+    }
+
+    // menu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.navigation, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 }
