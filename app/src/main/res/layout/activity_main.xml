@@ -20,21 +20,20 @@
 
             <EditText
                 android:id="@+id/editCityName"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:background="@color/white">
-            </EditText>
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"></EditText>
 
             <Button
                 android:id="@+id/btnSearch"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Search">
-            </Button>
+                android:text="Search"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"></Button>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
@@ -57,14 +56,19 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/image"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/linearLayout2">
 
                 <TextView
                     android:id="@+id/tvCity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ville"
-                    android:textColor="@color/white">
+                    android:textColor="@color/white"
+                    tools:layout_conversion_absoluteHeight="19dp"
+                    tools:layout_editor_absoluteY="80dp"
+                    tools:layout_editor_absoluteX="112dp"
+                    tools:layout_conversion_absoluteWidth="27dp">
 
                 </TextView>
 
@@ -73,7 +77,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Temperature"
-                    android:textColor="@color/white">
+                    android:textColor="@color/white"
+                    tools:layout_conversion_absoluteHeight="19dp"
+                    tools:layout_editor_absoluteY="99dp"
+                    tools:layout_editor_absoluteX="112dp"
+                    tools:layout_conversion_absoluteWidth="80dp">
 
                 </TextView>
 
@@ -83,7 +91,11 @@
                     android:layout_height="wrap_content"
                     android:text="Vent"
                     android:textColor="@color/white"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:layout_conversion_absoluteHeight="19dp"
+                    tools:layout_editor_absoluteY="119dp"
+                    tools:layout_editor_absoluteX="112dp"
+                    tools:layout_conversion_absoluteWidth="29dp">
 
                 </TextView>
 
@@ -91,14 +103,13 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/bottomNav" />
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottomNav"
-    />
+    </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
