@@ -14,7 +14,8 @@ class SecondActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
-        bottomNav = findViewById(R.id.bottomNav) as BottomNavigationView
+        bottomNav = findViewById(R.id.bottomNav)
+        bottomNav.menu.findItem(R.id.favorites).isChecked = true
         bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> {
