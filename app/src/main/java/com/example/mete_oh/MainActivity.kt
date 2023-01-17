@@ -1,6 +1,8 @@
 package com.example.mete_oh
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -63,5 +65,12 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    // look at this section
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.navigation, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 }
