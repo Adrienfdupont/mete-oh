@@ -48,9 +48,10 @@ class SecondActivity : AppCompatActivity() {
         val sharedPref = this?.getSharedPreferences(
             getString(R.string.preference_file_key), Context.MODE_PRIVATE) ?: return
 
-        val cityName = sharedPref.getString(getString(R.string.storage), "Vide")
         val writeBox: TextView = findViewById(R.id.retrievedCityName)
-        writeBox.text = cityName
+        val dataBackup = sharedPref.getString(getString(R.string.storage), "Ville-Température-Vent-Image")
+        var mutableList : MutableList<String?> = (dataBackup?.split("-")?.map { it.trim() } ?: return).toMutableList()
+        writeBox.text = "Dernière ville actualisée : ${mutableList[0]}"
     }
 
     // menu

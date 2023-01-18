@@ -64,20 +64,19 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = this?.getSharedPreferences(
             getString(R.string.preference_file_key), Context.MODE_PRIVATE
         ) ?: return
-        val dataBackup = sharedPref.getString(getString(R.string.storage), "Vide")
+        val dataBackup = sharedPref.getString(getString(R.string.storage), "Ville-Température-Vent-Image")
+        var mutableList : MutableList<String?> = (dataBackup?.split("-")?.map { it.trim() } ?: return).toMutableList()
 
-        val dataList: MutableList<String?> = (dataBackup?.split("-")?.map { it.trim() } ?: return).toMutableList()
-
-        // remplir les éléments du layout
-        if (dataBackup != "vide"){
-            tvCity.text = dataList[0]
-            tvTemperature.text = "${dataList[1]} °C"
-            tvWind.text = "${dataList[2]} km/h"
-            Picasso.get().load("https://openweathermap.org/img/w/${dataList[3]}.png")
+        fun fillViews(){
+            tvCity.text = mutableList[0]
+            tvTemperature.text = "${mutableList[1]} °C"
+            tvWind.text = "${mutableList[2]} km/h"
+            Picasso.get().load(mutableList[3])
                 .into(imageView)
         }
 
-        // OpenWeatherMap
+        fillViews()
+
         fun getWeatherByCityName(cityName: String) {
 
             // création d'une instance retrofit
@@ -93,29 +92,30 @@ class MainActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     if (response.isSuccessful) {
                         val result = response.body()
-                        val newList = listOf<String>("", "", "")
 
-                        // afficher la ville
+                        // actualiser la ville
                         val city = result?.get("name")?.asString
-                        newList[0]= city
+                        mutableList[0] = city
 
-                        // afficher la température
+                        // actualiser la température
                         val temperature = result?.get("main")?.asJsonObject?.get("temp")?.asString
-                        dataList[1] = "$temperature °C"
+                        mutableList[1] = "$temperature °C"
 
-                        // afficher la vitesse du vent
+                        // actualiser la vitesse du vent
                         val wind = result?.get("wind")?.asJsonObject?.get("speed")?.asString
-                        dataList[2] = "$wind km/h"
+                        mutableList[2] = "$wind km/h"
 
-                        // afficher l'image correspondant à la météo
+                        // actualiser l'image correspondant à la météo
                         val weather = result?.get("weather")?.asJsonArray
                         val icon = weather?.get(0)?.asJsonObject?.get("icon")?.asString
-                        Picasso.get().load("https://openweathermap.org/img/w/$icon.png")
-                            .into(imageView)
+                        mutableList[3] = "https://openweathermap.org/img/w/${icon}.png"
+
+                        // actualiser l'interface
+                        fillViews()
 
                         // convert mutable list to String
                         val separator = "-"
-                        val dataString = dataList.joinToString(separator)
+                        val dataString = mutableList.joinToString(separator)
 
                         // store data in sharedPref
                         with(sharedPref.edit()) {
@@ -143,18 +143,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Champ vide", Toast.LENGTH_SHORT).show()
             } else {
                 getWeatherByCityName(cityName)
-            }
-        }
-
-        // stockage du nom de la ville
-        val button: Button = findViewById(R.id.btnSave)
-        button.setOnClickListener {
-            val findCityName: EditText = findViewById(R.id.editCityName)
-            val foundCityName: String = findCityName.text.toString()
-
-            with(sharedPref.edit()) {
-                putString(getString(R.string.storage), foundCityName)
-                apply()
             }
         }
     }
