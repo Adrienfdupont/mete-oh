@@ -3,6 +3,9 @@ package com.example.mete_oh
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -21,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : AppCompatActivity() {
 
     // déclarer la BottomNavigationView
-    lateinit var bottomNav : BottomNavigationView
+    lateinit var bottomNav: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,11 +105,11 @@ class MainActivity : AppCompatActivity() {
 
         // affichage de la météo à la demande
         val btnSearch: Button = findViewById(R.id.btnSearch)
-        btnSearch.setOnClickListener(){
+        btnSearch.setOnClickListener() {
             val editCityName: EditText = findViewById(R.id.editCityName)
             val cityName: String = editCityName.text.toString()
 
-            if (cityName.isEmpty()){
+            if (cityName.isEmpty()) {
                 Toast.makeText(applicationContext, "Champ vide", Toast.LENGTH_SHORT).show()
             } else {
                 getWeatherByCityName(cityName)
@@ -115,17 +118,44 @@ class MainActivity : AppCompatActivity() {
 
         // stockage des favoris
         val sharedPref = this?.getSharedPreferences(
-            getString(R.string.preference_file_key), Context.MODE_PRIVATE) ?: return
+            getString(R.string.preference_file_key), Context.MODE_PRIVATE
+        ) ?: return
 
         val button: Button = findViewById(R.id.btnSave)
         button.setOnClickListener {
             val findCityName: EditText = findViewById(R.id.editCityName)
             val foundCityName: String = findCityName.text.toString()
 
-            with (sharedPref.edit()) {
+            with(sharedPref.edit()) {
                 putString(getString(R.string.storage), foundCityName)
                 apply()
             }
         }
+    }
+
+    // menu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.navigation, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    // changement d'activité
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.home -> {
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
+
+            R.id.favorites -> {
+                val intent = Intent(this, SecondActivity::class.java)
+                startActivity(intent)
+            }
+
+            else -> Toast.makeText(this, item.title, Toast.LENGTH_LONG).show()
+        }
+
+        return true
     }
 }
