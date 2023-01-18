@@ -54,6 +54,34 @@ class MainActivity : AppCompatActivity() {
             return@setOnItemSelectedListener true
         }
 
+        // déclarer sharedPref
+        val sharedPref = this?.getSharedPreferences(
+            getString(R.string.preference_file_key), Context.MODE_PRIVATE
+        ) ?: return
+
+        // data backup
+        val dataBackup = sharedPref.getString(getString(R.string.storage), "Vide")
+        var dataList: List<String?> = dataBackup?.split("-")?.map { it.trim() } ?: return
+
+        val tvCity: TextView = findViewById(R.id.tvCity)
+        tvCity.text = dataList[0]
+
+        val tvTemperature: TextView = findViewById(R.id.tvTemperature)
+        val startTempVal = dataList[1]
+        tvTemperature.text = "$startTempVal °C"
+
+        val tvWind: TextView = findViewById(R.id.tvWind)
+        val startWindVal = dataList[2]
+        tvWind.text = "$startWindVal km/h"
+
+        val imageView: ImageView = findViewById(R.id.image)
+        val icon = dataList[3]
+        Picasso.get().load("https://openweathermap.org/img/w/$icon.png")
+            .into(imageView)
+
+        // déclarer la liste mutable à stocker dans sharedPref
+        val data: MutableList<String> = ArrayList()
+
         // OpenWeatherMap
         fun getWeatherByCityName(cityName: String) {
 
@@ -76,15 +104,27 @@ class MainActivity : AppCompatActivity() {
                         val tvCity: TextView = findViewById(R.id.tvCity)
                         tvCity.text = city
 
+                        if (city != null) {
+                            data.add(city)
+                        }
+
                         // afficher la température
                         val temperature = result?.get("main")?.asJsonObject?.get("temp")?.asString
                         val tvTemperature: TextView = findViewById(R.id.tvTemperature)
                         tvTemperature.text = "$temperature °C"
 
+                        if (temperature != null) {
+                            data.add(temperature)
+                        }
+
                         // afficher la vitesse du vent
                         val wind = result?.get("wind")?.asJsonObject?.get("speed")?.asString
                         val tvWind: TextView = findViewById(R.id.tvWind)
                         tvWind.text = "$wind km/h"
+
+                        if (wind != null) {
+                            data.add(wind)
+                        }
 
                         // afficher l'image correspondant à la météo
                         val imageView: ImageView = findViewById(R.id.image)
@@ -92,6 +132,20 @@ class MainActivity : AppCompatActivity() {
                         val icon = weather?.get(0)?.asJsonObject?.get("icon")?.asString
                         Picasso.get().load("https://openweathermap.org/img/w/$icon.png")
                             .into(imageView)
+
+                        if (icon != null) {
+                            data.add(icon)
+                        }
+
+                        // convert mutable list to String
+                        val separator = "-"
+                        val dataString = data.joinToString(separator)
+
+                        // store data in sharedPref
+                        with(sharedPref.edit()) {
+                            putString(getString(R.string.storage), dataString)
+                            apply()
+                        }
                     }
                 }
 
@@ -116,11 +170,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // stockage des favoris
-        val sharedPref = this?.getSharedPreferences(
-            getString(R.string.preference_file_key), Context.MODE_PRIVATE
-        ) ?: return
-
+        // stockage du nom de la ville
         val button: Button = findViewById(R.id.btnSave)
         button.setOnClickListener {
             val findCityName: EditText = findViewById(R.id.editCityName)
