@@ -69,8 +69,8 @@ class MainActivity : AppCompatActivity() {
 
         fun fillViews(){
             tvCity.text = mutableList[0]
-            tvTemperature.text = "${mutableList[1]} °C"
-            tvWind.text = "${mutableList[2]} km/h"
+            tvTemperature.text = "${mutableList[1]}"
+            tvWind.text = "${mutableList[2]}"
             Picasso.get().load(mutableList[3])
                 .into(imageView)
         }
