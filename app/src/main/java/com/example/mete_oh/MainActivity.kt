@@ -54,33 +54,28 @@ class MainActivity : AppCompatActivity() {
             return@setOnItemSelectedListener true
         }
 
-        // déclarer sharedPref
+        // récupérer les éléments du layout
+        val tvCity: TextView = findViewById(R.id.tvCity)
+        val tvTemperature: TextView = findViewById(R.id.tvTemperature)
+        val tvWind: TextView = findViewById(R.id.tvWind)
+        val imageView: ImageView = findViewById(R.id.image)
+
+        // récupérer les data
         val sharedPref = this?.getSharedPreferences(
             getString(R.string.preference_file_key), Context.MODE_PRIVATE
         ) ?: return
-
-        // data backup
         val dataBackup = sharedPref.getString(getString(R.string.storage), "Vide")
-        var dataList: List<String?> = dataBackup?.split("-")?.map { it.trim() } ?: return
 
-        val tvCity: TextView = findViewById(R.id.tvCity)
-        tvCity.text = dataList[0]
+        val dataList: MutableList<String?> = (dataBackup?.split("-")?.map { it.trim() } ?: return).toMutableList()
 
-        val tvTemperature: TextView = findViewById(R.id.tvTemperature)
-        val startTempVal = dataList[1]
-        tvTemperature.text = "$startTempVal °C"
-
-        val tvWind: TextView = findViewById(R.id.tvWind)
-        val startWindVal = dataList[2]
-        tvWind.text = "$startWindVal km/h"
-
-        val imageView: ImageView = findViewById(R.id.image)
-        val icon = dataList[3]
-        Picasso.get().load("https://openweathermap.org/img/w/$icon.png")
-            .into(imageView)
-
-        // déclarer la liste mutable à stocker dans sharedPref
-        val data: MutableList<String> = ArrayList()
+        // remplir les éléments du layout
+        if (dataBackup != "vide"){
+            tvCity.text = dataList[0]
+            tvTemperature.text = "${dataList[1]} °C"
+            tvWind.text = "${dataList[2]} km/h"
+            Picasso.get().load("https://openweathermap.org/img/w/${dataList[3]}.png")
+                .into(imageView)
+        }
 
         // OpenWeatherMap
         fun getWeatherByCityName(cityName: String) {
@@ -98,48 +93,29 @@ class MainActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     if (response.isSuccessful) {
                         val result = response.body()
+                        val newList = listOf<String>("", "", "")
 
                         // afficher la ville
                         val city = result?.get("name")?.asString
-                        val tvCity: TextView = findViewById(R.id.tvCity)
-                        tvCity.text = city
-
-                        if (city != null) {
-                            data.add(city)
-                        }
+                        newList[0]= city
 
                         // afficher la température
                         val temperature = result?.get("main")?.asJsonObject?.get("temp")?.asString
-                        val tvTemperature: TextView = findViewById(R.id.tvTemperature)
-                        tvTemperature.text = "$temperature °C"
-
-                        if (temperature != null) {
-                            data.add(temperature)
-                        }
+                        dataList[1] = "$temperature °C"
 
                         // afficher la vitesse du vent
                         val wind = result?.get("wind")?.asJsonObject?.get("speed")?.asString
-                        val tvWind: TextView = findViewById(R.id.tvWind)
-                        tvWind.text = "$wind km/h"
-
-                        if (wind != null) {
-                            data.add(wind)
-                        }
+                        dataList[2] = "$wind km/h"
 
                         // afficher l'image correspondant à la météo
-                        val imageView: ImageView = findViewById(R.id.image)
                         val weather = result?.get("weather")?.asJsonArray
                         val icon = weather?.get(0)?.asJsonObject?.get("icon")?.asString
                         Picasso.get().load("https://openweathermap.org/img/w/$icon.png")
                             .into(imageView)
 
-                        if (icon != null) {
-                            data.add(icon)
-                        }
-
                         // convert mutable list to String
                         val separator = "-"
-                        val dataString = data.joinToString(separator)
+                        val dataString = dataList.joinToString(separator)
 
                         // store data in sharedPref
                         with(sharedPref.edit()) {
