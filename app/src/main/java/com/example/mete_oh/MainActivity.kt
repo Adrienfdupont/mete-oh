@@ -1,5 +1,6 @@
 package com.example.mete_oh
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -25,11 +26,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        // cacher la barre d'action
-        if (supportActionBar != null) {
-            supportActionBar!!.hide()
-        }
 
         // déclarer la bottomNav
         bottomNav = findViewById(R.id.bottomNav)
@@ -111,9 +107,24 @@ class MainActivity : AppCompatActivity() {
             val cityName: String = editCityName.text.toString()
 
             if (cityName.isEmpty()){
-                Toast.makeText(applicationContext, "Champs vide", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "Champ vide", Toast.LENGTH_SHORT).show()
             } else {
                 getWeatherByCityName(cityName)
+            }
+        }
+
+        // stockage des favoris
+        val sharedPref = this?.getSharedPreferences(
+            getString(R.string.preference_file_key), Context.MODE_PRIVATE) ?: return
+
+        val button: Button = findViewById(R.id.btnSave)
+        button.setOnClickListener {
+            val findCityName: EditText = findViewById(R.id.editCityName)
+            val foundCityName: String = findCityName.text.toString()
+
+            with (sharedPref.edit()) {
+                putString(getString(R.string.storage), foundCityName)
+                apply()
             }
         }
     }
